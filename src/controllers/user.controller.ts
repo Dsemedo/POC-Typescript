@@ -1,21 +1,21 @@
 import {Request, Response} from 'express';
 import {connectionDb} from "../config/database.js"
 import { userType } from '../protocols/protocol.js';
-import { insertUser, toUpdateUser } from '../repositories/user.repository.js';
+import { insertUser, toUpdateUser, toDeleteUser,getAllUsers, getOnlyUsersWhoBeted } from '../repositories/user.repository.js';
 
-async function getUser(req: Request, res: Response){
+async function getUser(req: Request, res: Response): Promise<void>{
 
 try{
-   const {rows} = await connectionDb.query('SELECT * FROM users');
+   const users = await getAllUsers();
 
-   res.status(200).send(rows);
+   res.status(200).send(users.rows);
 }catch(err){
 console.log(err);
 res.sendStatus(409);
 }
 }
 
-async function postUser(req: Request, res: Response) {
+async function postUser(req: Request, res: Response): Promise<void> {
     const newUser = req.body as userType
 
     console.log(req.body);
@@ -31,7 +31,7 @@ async function postUser(req: Request, res: Response) {
 
 }
 
-async function updateUser(req: Request, res: Response) {
+async function updateUser(req: Request, res: Response): Promise<void> {
     const {id} = req.params;
 
     try{
@@ -43,11 +43,11 @@ async function updateUser(req: Request, res: Response) {
     }
 }
 
-async function deleteUser(req: Request, res: Response) {
+async function deleteUser(req: Request, res: Response): Promise<void> {
     const {id} = req.params;
 
     try{
-       await connectionDb.query(`DELETE FROM users WHERE id=$1`, [id]);
+       await toDeleteUser(id);
 
        res.status(200).send("Usuario deletado com sucesso!")
 
@@ -56,11 +56,11 @@ async function deleteUser(req: Request, res: Response) {
     }
 }
 
-async function getUsersWhoBeted(req: Request, res: Response){
+async function getUsersWhoBeted(req: Request, res: Response): Promise<void>{
     try{
-        const {rows} = await connectionDb.query('SELECT * FROM users WHERE beted=$1', [true]);
+        const usersWhoBeted = await getOnlyUsersWhoBeted()
      
-        res.status(200).send(rows);
+        res.status(200).send(usersWhoBeted.rows);
      }catch(err){
      console.log(err);
      res.sendStatus(409);
@@ -69,15 +69,3 @@ async function getUsersWhoBeted(req: Request, res: Response){
 
 
 export { getUser, postUser, updateUser, deleteUser, getUsersWhoBeted };
-
-
-// CREATE TABLE "users" (
-// 	"id" serial NOT NULL PRIMARY KEY,
-// 	"username" text NOT NULL UNIQUE,
-// 	"beted" BOOLEAN NOT NULL DEFAULT 'false'
-// );
-
-
-
-
-
