@@ -7,6 +7,7 @@ import { userType } from "../protocols/protocol.js";
 
  async function toUpdateUser(id: string, status: boolean ){
     return [];
+    testeee
 }
 
 async function toDeleteUser(id: string) {
