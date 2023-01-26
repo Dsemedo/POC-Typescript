@@ -9,3 +9,5 @@ server.use(userRoute);
 server.listen(4000, () => {
     console.log('Server is running')
 })
+
+//teste
