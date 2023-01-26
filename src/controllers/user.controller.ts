@@ -1,37 +1,31 @@
 import {Request, Response} from 'express';
-import {connectionDb} from "../config/database.js"
 import { userType } from '../protocols/protocol.js';
-import { insertUser, toUpdateUser, toDeleteUser,getAllUsers, getOnlyUsersWhoBeted } from '../repositories/user.repository.js';
+import { getAllUsers, insertUser, toUpdateUser } from '../repositories/user.repository.js';
 
-async function getUser(req: Request, res: Response): Promise<void>{
+async function getUser(req: Request, res: Response){
+    
+    const resultado = await getAllUsers();
 
-try{
-   const users = await getAllUsers();
-
-   res.status(200).send(users.rows);
-}catch(err){
-console.log(err);
-res.sendStatus(409);
-}
+    return res.send(resultado)
 }
 
-async function postUser(req: Request, res: Response): Promise<void> {
+ async function postUser(req: Request, res: Response): Promise<void> {
     const newUser = req.body as userType
 
     console.log(req.body);
 
-   try{
+//    try{
     const insertedUser = await insertUser(newUser);
 
     res.status(201).send(insertedUser);
 
-   }catch(err){
-    console.log(err.detail);
-   }
+//    } catch(err){
+//     console.log(err.detail);
+//    }
 
 }
 
-async function updateUser(req: Request, res: Response): Promise<void> {
+async function updateUser(req: Request, res: Response) {
     const {id} = req.params;
 
     try{
@@ -43,11 +37,11 @@ async function updateUser(req: Request, res: Response): Promise<void> {
     }
 }
 
-async function deleteUser(req: Request, res: Response): Promise<void> {
+async function deleteUser(req: Request, res: Response) {
     const {id} = req.params;
 
     try{
-       await toDeleteUser(id);
+    //    await connectionDb.query(`DELETE FROM users WHERE id=$1`, [id]);
 
        res.status(200).send("Usuario deletado com sucesso!")
 
@@ -56,11 +50,11 @@ async function deleteUser(req: Request, res: Response): Promise<void> {
     }
 }
 
-async function getUsersWhoBeted(req: Request, res: Response): Promise<void>{
+async function getUsersWhoBeted(req: Request, res: Response){
     try{
-        const usersWhoBeted = await getOnlyUsersWhoBeted()
+        // const {rows} = await connectionDb.query('SELECT * FROM users WHERE beted=$1', [true]);
      
-        res.status(200).send(usersWhoBeted.rows);
+        // res.status(200).send(usersWhoBeted);
      }catch(err){
      console.log(err);
      res.sendStatus(409);
@@ -69,3 +63,15 @@ async function getUsersWhoBeted(req: Request, res: Response): Promise<void>{
 
 
 export { getUser, postUser, updateUser, deleteUser, getUsersWhoBeted };
+
+
+// CREATE TABLE "users" (
+// 	"id" serial NOT NULL PRIMARY KEY,
+// 	"username" text NOT NULL UNIQUE,
+// 	"beted" BOOLEAN NOT NULL DEFAULT 'false'
+// );
+
+
+
+
+
