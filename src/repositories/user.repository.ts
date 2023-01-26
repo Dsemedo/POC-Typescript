@@ -1,17 +1,26 @@
-import { connectionDb } from "../config/database.js";
+import prisma from "../config/database.js";
 import { userType } from "../protocols/protocol.js";
 
  async function insertUser(username: userType) {
-    return await connectionDb.query(`
-        INSERT INTO users (username, beted) VALUES ($1, $2);`,
-        [username.username, false]
-    );
+    return [];
 };
 
  async function toUpdateUser(id: string, status: boolean ){
-    return await connectionDb.query(`UPDATE users SET beted=$1 WHERE id=$2`, [status, id])
+    return [];
 }
 
-// async function deleteUser()
+async function toDeleteUser(id: string) {
+    // return await connectionDb.query(`DELETE FROM users WHERE id=$1`, [id]);
+}
 
-export {insertUser, toUpdateUser}
+async function getAllUsers() {
+    return prisma.users.findMany();
+}
+
+
+async function getOnlyUsersWhoBeted() {
+    // return await connectionDb.query('SELECT * FROM users WHERE beted=$1', [true]);
+}
+
+
+export {insertUser, toUpdateUser,getAllUsers, getOnlyUsersWhoBeted, toDeleteUser}

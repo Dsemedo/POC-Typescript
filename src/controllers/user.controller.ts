@@ -1,33 +1,27 @@
 import {Request, Response} from 'express';
-import {connectionDb} from "../config/database.js"
 import { userType } from '../protocols/protocol.js';
-import { insertUser, toUpdateUser } from '../repositories/user.repository.js';
+import { getAllUsers, insertUser, toUpdateUser } from '../repositories/user.repository.js';
 
 async function getUser(req: Request, res: Response){
+    
+    const resultado = await getAllUsers();
 
-try{
-   const {rows} = await connectionDb.query('SELECT * FROM users');
-
-   res.status(200).send(rows);
-}catch(err){
-console.log(err);
-res.sendStatus(409);
-}
+    return res.send(resultado)
 }
 
-async function postUser(req: Request, res: Response) {
+ async function postUser(req: Request, res: Response): Promise<void> {
     const newUser = req.body as userType
 
     console.log(req.body);
 
-   try{
+//    try{
     const insertedUser = await insertUser(newUser);
 
     res.status(201).send(insertedUser);
 
-   }catch(err){
-    console.log(err.detail);
-   }
+//    } catch(err){
+//     console.log(err.detail);
+//    }
 
 }
 
@@ -47,7 +41,7 @@ async function deleteUser(req: Request, res: Response) {
     const {id} = req.params;
 
     try{
-       await connectionDb.query(`DELETE FROM users WHERE id=$1`, [id]);
+    //    await connectionDb.query(`DELETE FROM users WHERE id=$1`, [id]);
 
        res.status(200).send("Usuario deletado com sucesso!")
 
@@ -58,9 +52,9 @@ async function deleteUser(req: Request, res: Response) {
 
 async function getUsersWhoBeted(req: Request, res: Response){
     try{
-        const {rows} = await connectionDb.query('SELECT * FROM users WHERE beted=$1', [true]);
+        // const {rows} = await connectionDb.query('SELECT * FROM users WHERE beted=$1', [true]);
      
-        res.status(200).send(rows);
+        // res.status(200).send(usersWhoBeted);
      }catch(err){
      console.log(err);
      res.sendStatus(409);
